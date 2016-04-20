@@ -147,7 +147,8 @@ FXCrawler.prototype.initCrawler = function() {
                 return
             }
             queueItem.responseBody = decoded.toString();
-            (condition = _this.getCondition(queueItem.url)) && _this.emit("fetchcomplete", this, condition, queueItem, evtDone);
+            condition = _this.getCondition(queueItem.url);
+            _this.emit("fetchcomplete", this, condition, queueItem, evtDone);
         });
     }).on('complete', function() {
         console.log("complete");

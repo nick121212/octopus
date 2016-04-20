@@ -18,26 +18,20 @@ exports = module.exports = (app, db, errors) => {
                 return next(new errors.NotFoundError(`id[${id}] not exist!`));
             }
             var open = require('amqplib').connect('amqp://nick:nick@localhost');
-            var qname = "crawler";
 
-            modelInstance.opt = "start";
             // Consumer
             open.then(function(conn) {
                 var ok = conn.createChannel();
                 ok = ok.then(function(ch) {
-                    var push = ch.publish('amq.topic', 'crawler.setting', new Buffer(JSON.stringify({
+                    var push = ch.publish('amq.topic', 'crawler.setting.' + modelInstance.key, new Buffer(JSON.stringify({
                         opt: "start",
                         setting: modelInstance
                     })));
-                    if (push) {
-                        res.json({
-                            state: "SUCCESS"
-                        });
-                    } else {
-                        res.json({
-                            state: "publish error"
-                        });
-                    }
+                    console.log(push);
+                    console.log('crawler.setting.' + modelInstance.key);
+                    res.json({
+                        state: (push ? "SUCCESS" : "PUBLISH ERROR!")
+                    });
                 });
             }).then(null, next);
         }, next);
