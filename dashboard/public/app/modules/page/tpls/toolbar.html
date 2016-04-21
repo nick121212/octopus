@@ -1,7 +1,7 @@
 <md-toolbar md-theme="default" class="md-table-toolbar md-default" ng-hide="selected.length || filter.show" aria-hidden="false">
     <div class="md-toolbar-tools">
         <ng-md-icon ng-if="managerCtl.menu.icon" icon="{{managerCtl.menu.icon}}"></ng-md-icon>
-        <h2 class="md-title">{{ managerCtl.menu.title }}</h2>
+        <h2 class="md-title hide-xs">{{ managerCtl.menu.title }}</h2>
         <div flex=""></div>
         <div class="md-toolbar-item" layout="row">
             <md-button ng-repeat="item in managerCtl.rootToolbars" ng-click="item.onClick($event)" ng-disabled="managerCtl.isBusy" aria-label="item.title"
