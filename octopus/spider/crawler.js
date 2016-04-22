@@ -62,9 +62,10 @@ function Crawlers(initialPath, options, settings) {
     }, options);
     options.decodeResponses = false;
     // 设置参数，初始化crawler完毕
-    _.each(options, function (val, key) {
+    _.each(options, function(val, key) {
         crawler[key] = val;
     });
+    crawler.cache = new Crawler.cache('/src/crawler');
 
     Crawlers.items[settings.key] = this;
     this.init();
@@ -73,57 +74,57 @@ util.inherits(Crawlers, EventEmitter);
 
 Crawlers.items = [];
 
-Crawlers.prototype.robots = function () {
+Crawlers.prototype.robots = function() {
     return robotsParser(_this.settings.robots.txtUrl, _this.settings.robots.headers);
 }
-Crawlers.prototype.start = function () {
+Crawlers.prototype.start = function() {
     this.crawler.start();
 }
-Crawlers.prototype.init = function () {
+Crawlers.prototype.init = function() {
     var _this = this;
 
     if (_this.settings.conditions) {
-        _this.conditionID = _this.crawler.addFetchCondition(function (parsedURL, queueItem) {
+        _this.conditionID = _this.crawler.addFetchCondition(function(parsedURL, queueItem) {
             var result = false;
 
             !/window\.location\;/gi.test(parsedURL.uriPath) && !/string(.*?)href/gi.test(parsedURL.uriPath) && !/%7b(.*?)%7d/gi.test(parsedURL.uriPath) &&
-            _.each(_this.settings.conditions, function (condition) {
-                result = condition.regex.test(parsedURL.uriPath);
-                if (result) {
-                    return false;
-                }
-            });
+                _.each(_this.settings.conditions, function(condition) {
+                    result = condition.regex.test(parsedURL.uriPath);
+                    if (result) {
+                        return false;
+                    }
+                });
             return result;
         });
     }
 
-    _this.crawler.on('crawlstart', function () {
+    _this.crawler.on('crawlstart', function() {
         _this.isStart = true;
-    }).on('queueadd', function (queueItem) {
+    }).on('queueadd', function(queueItem) {
         // console.log(queueItem.url + "add to the queue!");
-    }).on('fetchstart', function (queueItem, requestOptions) {
+    }).on('fetchstart', function(queueItem, requestOptions) {
         console.log("start fetch:" + queueItem.url);
-    }).on('fetchcomplete', function (queueItem, responseBody, responseObject) {
+    }).on('fetchcomplete', function(queueItem, responseBody, responseObject) {
         var evtDone = this.wait();
         var buffer = new Buffer(responseBody, 'utf-8');
 
-        zlib.gunzip(buffer, function (err, decoded) {
+        zlib.gunzip(buffer, function(err, decoded) {
             data = decoded.toString();
             queueItem.responseBody = data;
             _this.emit("fetchcomplete", queueItem, evtDone);
         });
-    }).on('complete', function () {
+    }).on('complete', function() {
         _this.isStart = false;
         console.log("complete");
-    }).on('discoverycomplete', function (queueItem, resources) {
+    }).on('discoverycomplete', function(queueItem, resources) {
         // console.log(queueItem.url, resources.length);
-    }).on('gziperror', function (queueItem, error, resourceData) {
+    }).on('gziperror', function(queueItem, error, resourceData) {
         console.log(error);
         _this.crawler.queueURL(queueItem.uriPath, queueItem);
-    }).on('fetcherror', function (queueItem, response) {
+    }).on('fetcherror', function(queueItem, response) {
         console.log("fetcherror", response.code);
         _this.crawler.queueURL(queueItem.uriPath, queueItem);
-    }).on('fetchtimeout', function (queueItem, crawlerTimeoutValue) {
+    }).on('fetchtimeout', function(queueItem, crawlerTimeoutValue) {
         console.log("fetchtimeout" + crawlerTimeoutValue);
         _this.crawler.queueURL(queueItem.uriPath, queueItem);
     });

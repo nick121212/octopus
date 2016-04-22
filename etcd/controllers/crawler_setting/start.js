@@ -17,7 +17,7 @@ exports = module.exports = (app, db, errors) => {
             if (!modelInstance) {
                 return next(new errors.NotFoundError(`id[${id}] not exist!`));
             }
-            var open = require('amqplib').connect('amqp://nick:nick@localhost');
+            var open = require('amqplib').connect('amqp://nick:nick@114.55.8.106');
 
             // Consumer
             open.then(function(conn) {

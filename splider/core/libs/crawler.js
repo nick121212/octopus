@@ -16,6 +16,7 @@ function FXCrawler(settings) {
     this.isMaster = false;
     this.crawler = new Crawler(this.settings.crawler.host);
     this.key = this.settings.key;
+    this.queueFile = this.key + "-queue.json";
     this.options = this.settings.crawler;
     this.init();
 }
@@ -61,22 +62,9 @@ FXCrawler.prototype.initRobot = function() {
 
     robots.txtUrl && robotsParser(robots.txtUrl, robots.headers || []);
 };
-// /**
-//  * 初始化爬取页面的处理
-//  */
-// FXCrawler.prototype.initChilds = function() {
-//     _.each(this.settings.conditions, function(condition) {
-//         var worker = new Worker(function() {
-//             this.onmessage = function(event) {
-//                 postMessage(event.data);
-//             };
-//         });
-//         worker.addEventListener('message', function(event) {
-//             console.log(event);
-//         });
-//         condition.enabled && worker.postMessage(condition);
-//     });
-// };
+/**
+ * 获取condition的信息，没有则返回null
+ */
 FXCrawler.prototype.getCondition = function(url) {
     var _this = this, result;
 
@@ -120,9 +108,16 @@ FXCrawler.prototype.complete = function() {
     if (this.discoverComplete) {
         this.emit("complete");
     } else {
+        this.crawler.queue.defrost(this.queueFile);
         this.start();
     }
 };
+/**
+ * 保存queue里面的数据到硬盘
+ */
+FXCrawler.prototype.save = function() {
+    this.crawler.queue.freeze(this.queueFile, function() { });
+}
 /**
  * 初始化爬虫事件
  */

@@ -23,7 +23,7 @@ function _321go(msg) {
                 domainWhitelist: ["place.qyer.com", "bbs.qyer.com"],
                 proxyHostname: '218.3.177.19',
                 proxyPort: 8088,
-                // cache: new Crawler.cache('/src/crawler'),
+                
                 maxConcurrency: 5
             }, {
                     key: "qyer",

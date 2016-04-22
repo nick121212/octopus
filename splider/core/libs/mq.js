@@ -1,5 +1,5 @@
 var Promise = require("bluebird");
-var conn_promise = require('amqplib').connect('amqp://nick:nick@localhost');
+var conn_promise = require('amqplib').connect('amqp://nick:nick@114.55.8.106');
 
 function getQueue(qname, q_setting, prefetch) {
     return new Promise(function(resolve, reject, prefetch) {
