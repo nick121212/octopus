@@ -9,7 +9,11 @@ core.q.getQueue(qname_data, {
 }, 1).then(function(result) {
     // 消费
     result.ch.consume(result.q.queue, function(message) {
-        console.log(message);
-        //result.ch.ack(message);
+        var data = JSON.parse(message.content.toString());
+        var store = new core.store(data);
+
+        store.init(function() {
+            result.ch.ack(message);
+        });
     }, { noAck: false });
 }, console.warn);

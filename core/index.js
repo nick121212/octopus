@@ -8,9 +8,11 @@
 var FXCrawler = require('./libs/crawler');
 var mq = require('./libs/mq');
 var elastic = require('./libs/elastic');
+var store = require('./libs/store');
 
 module.exports = exports = {
     crawler: FXCrawler,
     q: mq,
-    elastic: elastic
+    elastic: elastic,
+    store: store
 };
