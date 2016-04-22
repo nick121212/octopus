@@ -5,6 +5,7 @@ var EventEmitter = require("events").EventEmitter;
 var _ = require('lodash');
 var robotsParser = require('robots-parser');
 var Crawler = require('simplecrawler');
+var Worker = require('webworker-threads').Worker;
 
 /**
  * 构造函数
@@ -79,6 +80,9 @@ Crawlers.prototype.robots = function() {
 }
 Crawlers.prototype.start = function() {
     this.crawler.start();
+}
+Crawlers.prototype.initConditionMission=function () {  
+    
 }
 Crawlers.prototype.init = function() {
     var _this = this;
