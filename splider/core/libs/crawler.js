@@ -4,7 +4,6 @@ var EventEmitter = require("events").EventEmitter;
 var zlib = require('zlib');
 var robotsParser = require('robots-parser');
 var util = require("util");
-var Worker = require('webworker-threads').Worker;
 
 /**
  * 爬虫类
@@ -122,19 +121,19 @@ FXCrawler.prototype.save = function() {
  * 初始化爬取任务
  */
 FXCrawler.prototype.initConditionMission = function(condition) {
-    var worker = new Worker(function() {
-        this.onmessage = function(event) {
-            postMessage(event.data);
-        };
-    });
-    worker.addEventListener('message', function(event) {
-        try {
-            console.log(event.data);
-        } catch (e) {
-            console.log(e);
-        }
-    });
-    worker.postMessage(condition);
+    // var worker = new Worker(function() {
+    //     this.onmessage = function(event) {
+    //         postMessage(event.data);
+    //     };
+    // });
+    // worker.addEventListener('message', function(event) {
+    //     try {
+    //         console.log(event.data);
+    //     } catch (e) {
+    //         console.log(e);
+    //     }
+    // });
+    // worker.postMessage(condition);
 }
 /**
  * 初始化爬虫事件
