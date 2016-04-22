@@ -115,7 +115,11 @@ FXCrawler.prototype.complete = function() {
  * 保存queue里面的数据到硬盘
  */
 FXCrawler.prototype.save = function() {
-    this.crawler.queue.freeze(this.queueFile, function() { });
+    try {
+        this.crawler.queue.freeze(this.queueFile, function() { });
+    } catch (e) {
+        console.log(e);
+    }
 }
 /**
  * 初始化爬取任务
@@ -151,6 +155,8 @@ FXCrawler.prototype.initCrawler = function() {
         var evtDone = this.wait();
         var buffer = new Buffer(responseBody, 'utf-8');
         var condition;
+
+        _this.save();
 
         zlib.gunzip(buffer, function(err, decoded) {
             if (err) {
