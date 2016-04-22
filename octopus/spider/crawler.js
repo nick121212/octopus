@@ -82,7 +82,46 @@ Crawlers.prototype.start = function() {
     this.crawler.start();
 }
 Crawlers.prototype.initConditionMission=function () {  
-    
+    var worker = new Worker(function() {
+        this.onmessage = function(event) {
+            postMessage(event.data);
+        };
+    });
+    worker.addEventListener('message', function(event) {
+        try {
+            var crawler = new Crawler("http://place.qyer.com/", {
+                interval: 1000,
+                maxDepth: 3,
+                host: "place.qyer.com",
+                initialPath: '/' + event.data + '/travel-notes/',
+                useProxy: false,
+                scanSubdomains: false,
+                stripQuerystring: true,
+                domainWhitelist: ["place.qyer.com", "bbs.qyer.com"],
+                proxyHostname: '218.3.177.19',
+                proxyPort: 8088,
+                
+                maxConcurrency: 5
+            }, {
+                    key: "qyer",
+                    conditions: [{
+                        regex: /thread\-\d+\-\d+\.html/g,
+                        inQueue: true
+                    }, {
+                            regex: new RegExp(event.data + '/(.*?)', 'g')   //place.qyer.com/poi/*****
+                        }]
+                });
+            crawler.on("fetchcomplete", function(queueItem, next) {
+                console.log("fetchcomplete:", queueItem.responseBody);
+                next();
+            });
+
+            crawler.start();
+        } catch (e) {
+            console.log(e);
+        }
+    });
+    worker.postMessage(msg);
 }
 Crawlers.prototype.init = function() {
     var _this = this;

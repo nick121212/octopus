@@ -33,11 +33,12 @@ core.q.getQueue(qname_setting, {
                         type: "urls",
                         id: data.url,
                         body: con
+                    }, function(err) {
+                        if (!err && condition) {
+                            result_data.ch.publish('amq.topic', 'crawler.data.' + craw.key + "." + condition.key, new Buffer(JSON.stringify(data)));
+                        }
+                        next();
                     });
-                    if (condition) {
-                        result_data.ch.publish('amq.topic', 'crawler.data.' + craw.key + "." + condition.key, new Buffer(JSON.stringify(data)));
-                    }
-                    next();
                 });
                 // 继续下一个爬虫任务
                 crawler.on("complete", function() {
